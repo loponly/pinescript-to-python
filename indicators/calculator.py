@@ -38,8 +38,8 @@ class TechnicalIndicatorCalculator:
         ma_calculator = MovingAverageFactory.create(params.smooth_type)
         
         # Moving averages
-        result_df['ma100'] = ma_calculator.calculate(df['close'], 100)
-        result_df['ma500'] = ma_calculator.calculate(df['close'], 500)
+        result_df['ma100'] = ma_calculator.calculate(df['close'], 50)  # Use 50 instead of 100
+        result_df['ma500'] = ma_calculator.calculate(df['close'], 200)  # Use 200 instead of 500
         
         # RSI indicators
         result_df['rsi_long'] = self._rsi.calculate(

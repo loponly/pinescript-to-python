@@ -270,7 +270,7 @@ class DatabaseManager:
             FROM (
                 SELECT *,
                        ROW_NUMBER() OVER (PARTITION BY symbol ORDER BY profit_factor DESC) as rn
-                FROM optimization_results
+                FROM backtest_results
                 WHERE profit_factor >= ?
             ) ranked
             WHERE rn = 1
@@ -305,7 +305,7 @@ class DatabaseManager:
             FROM (
                 SELECT *,
                        ROW_NUMBER() OVER (PARTITION BY timeframe ORDER BY profit_factor DESC) as rn
-                FROM optimization_results
+                FROM backtest_results
                 WHERE profit_factor >= ?
             ) ranked
             WHERE rn = 1
@@ -383,9 +383,9 @@ class DatabaseManager:
         query = '''
             SELECT symbol, timeframe, strategy_config, profit_factor, win_rate,
                    max_drawdown, total_return, sharpe_ratio, total_trades,
-                   avg_trade_duration, tested_combinations, optimization_time,
+                   avg_trade_duration, 0 as tested_combinations, 0 as optimization_time,
                    created_at
-            FROM optimization_results
+            FROM backtest_results
         '''
         
         if where_clauses:
@@ -405,13 +405,13 @@ class DatabaseManager:
             cursor = conn.cursor()
             
             # Basic counts
-            cursor.execute('SELECT COUNT(*) FROM optimization_results')
+            cursor.execute('SELECT COUNT(*) FROM backtest_results')
             total_results = cursor.fetchone()[0]
             
-            cursor.execute('SELECT COUNT(DISTINCT symbol) FROM optimization_results')
+            cursor.execute('SELECT COUNT(DISTINCT symbol) FROM backtest_results')
             unique_stocks = cursor.fetchone()[0]
             
-            cursor.execute('SELECT COUNT(DISTINCT timeframe) FROM optimization_results')
+            cursor.execute('SELECT COUNT(DISTINCT timeframe) FROM backtest_results')
             unique_timeframes = cursor.fetchone()[0]
             
             # Performance metrics
@@ -423,7 +423,7 @@ class DatabaseManager:
                     AVG(win_rate) as avg_wr,
                     AVG(max_drawdown) as avg_dd,
                     COUNT(*) FILTER (WHERE profit_factor > 1.0) as profitable_count
-                FROM optimization_results
+                FROM backtest_results
             ''')
             
             stats = cursor.fetchone()

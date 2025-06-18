@@ -67,34 +67,34 @@ def demo_strategy_testing(logger, scenarios: Dict[str, pd.DataFrame]):
     crypto_strategies = {
         'conservative': StrategyParams(
             smooth_type="SMA",
-            smoothing_length=50,
+            smoothing_length=20,
             rsi_length_long=14,
             enable_longs=True,
             enable_shorts=False,
             sl_percent_long=2.0,
-            use_rsi_filter=True,
+            use_rsi_filter=False,  # Simplify to get trades
             use_trend_filter=True
         ),
         'aggressive': StrategyParams(
             smooth_type="EMA", 
-            smoothing_length=20,
+            smoothing_length=12,
             rsi_length_long=10,
             enable_longs=True,
             enable_shorts=True,
             sl_percent_long=3.0,
             sl_percent_short=2.5,
-            use_rsi_filter=True,
-            use_atr_filter=True
+            use_rsi_filter=False,  # Simplify to get trades
+            use_atr_filter=False
         ),
         'scalping': StrategyParams(
             smooth_type="EMA",
-            smoothing_length=10,
+            smoothing_length=8,
             rsi_length_long=7,
             enable_longs=True,
             enable_shorts=True,
             sl_percent_long=1.5,
             sl_percent_short=1.5,
-            use_rsi_filter=True
+            use_rsi_filter=False  # Simplify to get trades
         )
     }
     
@@ -115,7 +115,7 @@ def demo_strategy_testing(logger, scenarios: Dict[str, pd.DataFrame]):
                     total_pnl = sum(trade.pnl for trade in trades)
                     winning_trades = len([t for t in trades if t.pnl > 0])
                     win_rate = winning_trades / len(trades)
-                    total_return = total_pnl / 10000  # Assuming 10k starting capital
+                    total_return = total_pnl  # PnL is already a percentage
                     
                     results[strategy_name][scenario_name] = {
                         'trades': len(trades),
@@ -125,7 +125,7 @@ def demo_strategy_testing(logger, scenarios: Dict[str, pd.DataFrame]):
                     }
                     
                     logger.info(f"  📈 {scenario_name}: {len(trades)} trades, "
-                               f"{win_rate:.1%} win rate, {total_return:.1%} return")
+                               f"{win_rate:.1%} win rate, {total_return:.2%} return")
                 else:
                     results[strategy_name][scenario_name] = {
                         'trades': 0, 'win_rate': 0, 'total_return': 0, 'total_pnl': 0
@@ -264,7 +264,7 @@ def demo_summary(logger, strategy_results):
             logger.info(f"  🎯 {strategy_name.upper()}:")
             logger.info(f"    - Total Trades: {total_trades}")
             logger.info(f"    - Avg Win Rate: {avg_win_rate:.1%}")
-            logger.info(f"    - Avg Return: {avg_return:.1%}")
+            logger.info(f"    - Avg Return: {avg_return:.2%}")
     
     logger.info("\n🎯 KEY ACHIEVEMENTS:")
     logger.info("  ✅ Generated realistic BTC/USDT market data")
