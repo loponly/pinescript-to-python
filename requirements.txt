@@ -18,8 +18,6 @@ black>=23.0.0
 ruff>=0.1.0
 mypy>=1.0.0
 
-# Type checking support
-types-pandas>=1.5.0
 
 # Data visualization (commonly needed for trading strategies)
 matplotlib>=3.6.0
