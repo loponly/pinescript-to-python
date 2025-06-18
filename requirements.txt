@@ -1,0 +1,24 @@
+# Core data manipulation and analysis
+pandas>=1.5.0
+numpy>=1.24.0
+
+# Technical analysis library
+ta>=0.10.0
+
+# Optional: Alternative technical analysis libraries
+TA-Lib>=0.4.25
+
+# Data visualization (commonly needed for trading strategies)
+matplotlib>=3.6.0
+plotly>=5.0.0
+
+# Optional: Financial data sources
+yfinance>=0.2.0
+ccxt>=4.0.0
+
+# Optional: Backtesting frameworks
+backtrader>=1.9.0
+zipline-reloaded>=2.2.0
+
+# Optional: Additional utilities
+requests>=2.28.0

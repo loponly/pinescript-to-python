@@ -1,0 +1,1 @@
+# Strategy module for trading algorithms, general converted from pine script to Python module
