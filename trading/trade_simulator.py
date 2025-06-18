@@ -5,7 +5,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-from ..models import StrategyParams, TradeResult
+from models import StrategyParams, TradeResult
 
 
 class TradeSimulator:

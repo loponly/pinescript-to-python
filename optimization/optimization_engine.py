@@ -8,8 +8,8 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from multiprocessing import Manager
 import gc
 
-from ..backtesting.backtesting_engine import BacktestingEngine, BacktestResult
-from ..models import StrategyParams
+from backtesting.backtesting_engine import BacktestingEngine, BacktestResult
+from models import StrategyParams
 from .optimization_config import OptimizationConfig, OptimizationJob, PARAMETER_GRIDS
 from .stock_data_manager import StockDataManager
 from .optimization_results import OptimizationResults

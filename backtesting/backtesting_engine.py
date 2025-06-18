@@ -7,8 +7,8 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from itertools import product
 import logging
 
-from ..models import StrategyParams, TradeResult
-from ..strategy import MomentumStrategy
+from models import StrategyParams, TradeResult
+from strategy import MomentumStrategy
 from .backtest_config import BacktestConfig
 from .timeframe_manager import TimeframeManager
 from .performance_metrics import PerformanceCalculator, PerformanceMetrics

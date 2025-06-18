@@ -1,0 +1,56 @@
+{
+  "schedules": {
+    "daily": {
+      "enabled": false,
+      "time": "02:00",
+      "stocks": 20,
+      "parameter_grid": "quick",
+      "timeframes": [
+        "1h",
+        "4h"
+      ]
+    },
+    "weekly": {
+      "enabled": true,
+      "day": "sunday",
+      "time": "01:00",
+      "stocks": 50,
+      "parameter_grid": "comprehensive",
+      "timeframes": [
+        "15m",
+        "1h",
+        "4h",
+        "1d"
+      ]
+    },
+    "monthly": {
+      "enabled": false,
+      "day": 1,
+      "time": "00:00",
+      "stocks": 100,
+      "parameter_grid": "comprehensive",
+      "timeframes": [
+        "5m",
+        "15m",
+        "1h",
+        "4h",
+        "1d"
+      ]
+    }
+  },
+  "notifications": {
+    "email_enabled": false,
+    "email_recipients": [],
+    "webhook_url": null
+  },
+  "data_management": {
+    "keep_results_days": 90,
+    "auto_cleanup": true,
+    "archive_old_results": true
+  },
+  "optimization_settings": {
+    "max_workers": 4,
+    "timeout_minutes": 120,
+    "min_data_points": 1000
+  }
+}

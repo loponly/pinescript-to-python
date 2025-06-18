@@ -16,10 +16,10 @@ from typing import List
 
 import pandas as pd
 
-from ..models import StrategyParams, TradeResult
-from ..indicators import TechnicalIndicatorCalculator
-from ..signals import SignalGenerator
-from ..trading import TradeSimulator
+from models import StrategyParams, TradeResult
+from indicators import TechnicalIndicatorCalculator
+from signals import SignalGenerator
+from trading import TradeSimulator
 
 class MomentumStrategy:
     """Main strategy class that orchestrates the momentum trading strategy."""

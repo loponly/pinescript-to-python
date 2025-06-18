@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 
-from ..models import StrategyParams
+from models import StrategyParams
 
 
 class SignalGenerator:

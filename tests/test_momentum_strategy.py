@@ -10,8 +10,13 @@ import pytest
 import pandas as pd
 import numpy as np
 
+from models import StrategyParams, TradeResult
 from strategy import (
-    StrategyParams,
+    MomentumStrategy,
+    create_default_strategy,
+    create_custom_strategy
+)
+from indicators import (
     ExponentialMovingAverage,
     SimpleMovingAverage,
     RelativeStrengthIndex,
@@ -19,13 +24,9 @@ from strategy import (
     AverageDirectionalIndex,
     MovingAverageFactory,
     TechnicalIndicatorCalculator,
-    SignalGenerator,
-    TradeResult,
-    TradeSimulator,
-    MomentumStrategy,
-    create_default_strategy,
-    create_custom_strategy
 )
+from signals import SignalGenerator
+from trading import TradeSimulator
 
 
 class TestStrategyParams:

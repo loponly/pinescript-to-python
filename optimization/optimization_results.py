@@ -9,7 +9,7 @@ import os
 from datetime import datetime
 import logging
 
-from ..backtesting.backtesting_engine import BacktestResult
+from backtesting.backtesting_engine import BacktestResult
 
 
 @dataclass

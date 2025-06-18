@@ -17,7 +17,7 @@ except ImportError:
     STREAMLIT_AVAILABLE = False
 
 from .database_manager import DatabaseManager
-from ..optimization.optimization_results import OptimizationResults
+from optimization.optimization_results import OptimizationResults
 
 
 class Dashboard:

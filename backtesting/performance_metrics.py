@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from typing import List, Optional, Tuple
 import pandas as pd
 import numpy as np
-from ..models import TradeResult
+from models import TradeResult
 
 
 @dataclass

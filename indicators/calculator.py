@@ -2,7 +2,7 @@
 
 import pandas as pd
 
-from ..models import StrategyParams
+from models import StrategyParams
 from .moving_averages import MovingAverageFactory, SimpleMovingAverage
 from .momentum import RelativeStrengthIndex
 from .volatility import AverageTrueRange

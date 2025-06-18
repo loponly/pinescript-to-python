@@ -8,7 +8,7 @@ from datetime import datetime
 import logging
 
 from .database_manager import DatabaseManager
-from ..optimization.optimization_results import OptimizationResults, OptimizationSummary
+from optimization.optimization_results import OptimizationResults, OptimizationSummary
 
 
 class ReportGenerator:

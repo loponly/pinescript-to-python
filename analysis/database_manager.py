@@ -8,8 +8,8 @@ import logging
 from datetime import datetime
 import os
 
-from ..optimization.optimization_results import OptimizationSummary
-from ..backtesting.backtesting_engine import BacktestResult
+from optimization.optimization_results import OptimizationSummary
+from backtesting.backtesting_engine import BacktestResult
 
 
 class DatabaseManager:

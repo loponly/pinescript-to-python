@@ -1,0 +1,33 @@
+============================================================
+TRADING STRATEGY OPTIMIZATION SUMMARY REPORT
+============================================================
+Generated: 2025-06-18 13:23:27
+
+OVERALL STATISTICS
+------------------------------
+Total Results: 1
+Unique Stocks: 1
+Unique Timeframes: 1
+Profitable Strategies: 1
+Profitability Rate: 100.0%
+Average Profit Factor: 1.30
+Best Profit Factor: 1.30
+Average Win Rate: 55.0%
+Average Max Drawdown: -8.0%
+
+TOP 10 BEST STRATEGIES BY STOCK
+----------------------------------------
+DEMO1    | 1h   | PF:   1.30 | WR:  55.0% | DD:  -8.0% | Trades:  25
+
+BEST STRATEGIES BY TIMEFRAME
+-----------------------------------
+1h   | DEMO1    | PF:   1.30 | WR:  55.0% | DD:  -8.0%
+
+RECOMMENDATIONS
+--------------------
+✓ Good overall profitability rate (>30%)
+✓ Good average profit factor (>1.2)
+✓ Good average win rate (>50%)
+✓ Acceptable drawdown levels (<15%)
+
+============================================================

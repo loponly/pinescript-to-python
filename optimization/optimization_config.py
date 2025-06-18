@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Any
-from ..backtesting.backtest_config import BacktestConfig
+from backtesting.backtest_config import BacktestConfig
 
 
 @dataclass(frozen=True)

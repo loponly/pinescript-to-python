@@ -9,8 +9,8 @@ import threading
 import json
 import os
 
-from ..optimization.optimization_engine import OptimizationEngine
-from ..optimization.optimization_config import OptimizationConfig, PARAMETER_GRIDS
+from optimization.optimization_engine import OptimizationEngine
+from optimization.optimization_config import OptimizationConfig, PARAMETER_GRIDS
 from .database_manager import DatabaseManager
 from .report_generator import ReportGenerator
 
