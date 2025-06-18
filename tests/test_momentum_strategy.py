@@ -28,6 +28,9 @@ from indicators import (
 from signals import SignalGenerator
 from trading import TradeSimulator
 
+# BTC/USDT testing imports
+from btc_data_generator import generate_btc_usdt_data, get_btc_usdt_test_scenarios, validate_ohlcv_data
+
 
 class TestStrategyParams:
     """Test strategy parameters dataclass."""
@@ -474,6 +477,294 @@ class TestIntegration:
             positions = result['position'].unique()
             assert all(pos in [-1, 0, 1] for pos in positions)
 
+
+class TestBTCUSDTData:
+    """Test BTC/USDT data generation and validation."""
+    
+    def test_btc_data_generation(self):
+        """Test that BTC/USDT data is generated correctly."""
+        btc_data = generate_btc_usdt_data(periods=100, seed=42)
+        
+        # Check structure
+        assert len(btc_data) == 100
+        assert list(btc_data.columns) == ['close', 'open', 'high', 'low', 'volume']
+        
+        # Check data types
+        assert btc_data['close'].dtype in [np.float64, float]
+        assert btc_data['volume'].dtype in [np.int64, int, np.int32]
+        
+        # Check price ranges (BTC should be reasonable)
+        assert btc_data['close'].min() > 1000  # Minimum reasonable BTC price
+        assert btc_data['close'].max() < 200000  # Maximum reasonable BTC price
+    
+    def test_btc_data_validation(self):
+        """Test BTC/USDT data validation function."""
+        btc_data = generate_btc_usdt_data(periods=50, seed=123)
+        
+        is_valid, message = validate_ohlcv_data(btc_data)
+        assert is_valid is True
+        assert "validation passed" in message.lower()
+        
+        # Test with invalid data
+        invalid_data = btc_data.copy()
+        invalid_data.loc[invalid_data.index[0], 'high'] = -100  # Invalid negative price
+        
+        is_valid, message = validate_ohlcv_data(invalid_data)
+        assert is_valid is False
+        assert "non-positive" in message.lower()
+    
+    def test_btc_market_scenarios(self):
+        """Test different BTC market scenarios."""
+        scenarios = get_btc_usdt_test_scenarios()
+        
+        expected_scenarios = ['bull_market', 'bear_market', 'sideways_market', 'high_volatility']
+        assert all(scenario in scenarios for scenario in expected_scenarios)
+        
+        # Test each scenario
+        for name, data in scenarios.items():
+            # Validate structure
+            assert len(data) > 0
+            assert all(col in data.columns for col in ['open', 'high', 'low', 'close', 'volume'])
+            
+            # Validate data quality
+            is_valid, _ = validate_ohlcv_data(data)
+            assert is_valid, f"Scenario {name} failed validation"
+    
+    @pytest.fixture
+    def btc_bull_market_data(self):
+        """Fixture providing BTC bull market data."""
+        return generate_btc_usdt_data(
+            periods=200,
+            base_price=20000,
+            volatility=0.025,
+            trend=0.0008,  # Bull market trend
+            seed=42
+        )
+    
+    @pytest.fixture 
+    def btc_bear_market_data(self):
+        """Fixture providing BTC bear market data."""
+        return generate_btc_usdt_data(
+            periods=200,
+            base_price=35000,
+            volatility=0.035,
+            trend=-0.0005,  # Bear market trend
+            seed=123
+        )
+
+
+class TestMomentumStrategyWithBTC:
+    """Test momentum strategy specifically with BTC/USDT data."""
+    
+    def test_strategy_on_btc_bull_market(self):
+        """Test strategy performance on BTC bull market data."""
+        btc_data = generate_btc_usdt_data(
+            periods=300,
+            base_price=25000,
+            volatility=0.025,
+            trend=0.0008,  # Strong bull trend
+            seed=42
+        )
+        
+        # Create strategy with BTC-optimized parameters
+        btc_params = StrategyParams(
+            smooth_type="EMA",
+            smoothing_length=50,  # Shorter for crypto volatility
+            rsi_length_long=10,   # Shorter RSI for crypto
+            rsi_length_short=10,
+            enable_longs=True,
+            enable_shorts=False,  # Bull market - longs only
+            sl_percent_long=3.0,  # Higher SL for crypto volatility
+            use_rsi_filter=True,
+            use_trend_filter=True
+        )
+        
+        strategy = MomentumStrategy(btc_params)
+        result = strategy.run_strategy(btc_data)
+        
+        # Check results
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == len(btc_data)
+        
+        # Check that strategy generated some signals in bull market
+        trades = strategy.executed_trades
+        if trades:  # If trades were executed
+            long_trades = [t for t in trades if t.direction == 'long']
+            assert len(long_trades) > 0, "Expected long trades in bull market"
+    
+    def test_strategy_on_btc_bear_market(self):
+        """Test strategy performance on BTC bear market data."""
+        btc_data = generate_btc_usdt_data(
+            periods=300,
+            base_price=40000,
+            volatility=0.03,
+            trend=-0.0006,  # Bear trend
+            seed=456
+        )
+        
+        # Create strategy with bear market parameters
+        btc_params = StrategyParams(
+            smooth_type="SMA",    # SMA might be better in downtrend
+            smoothing_length=100,
+            enable_longs=False,   # Bear market - shorts only
+            enable_shorts=True,
+            sl_percent_short=2.5,
+            use_rsi_filter=True,
+            use_trend_filter=True
+        )
+        
+        strategy = MomentumStrategy(btc_params)
+        result = strategy.run_strategy(btc_data)
+        
+        # Check results
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == len(btc_data)
+        
+        # Strategy should handle bear market without errors
+        trades = strategy.executed_trades
+        # Don't assert trades exist since bear markets might have fewer signals
+        assert isinstance(trades, list)
+    
+    def test_strategy_on_btc_high_volatility(self):
+        """Test strategy robustness on high volatility BTC data."""
+        btc_data = generate_btc_usdt_data(
+            periods=250,
+            base_price=30000,
+            volatility=0.06,  # Very high volatility
+            trend=0.0002,
+            seed=789
+        )
+        
+        # Create strategy with high volatility parameters
+        btc_params = StrategyParams(
+            smooth_type="EMA",
+            smoothing_length=20,  # Shorter to react faster
+            rsi_length_long=7,    # Very short for high volatility
+            rsi_length_short=7,
+            enable_longs=True,
+            enable_shorts=True,
+            sl_percent_long=4.0,  # Wider stops for volatility
+            sl_percent_short=4.0,
+            use_rsi_filter=True,
+            use_atr_filter=True   # ATR filter important for volatility
+        )
+        
+        strategy = MomentumStrategy(btc_params)
+        
+        # Should not raise any exceptions even with high volatility
+        result = strategy.run_strategy(btc_data)
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == len(btc_data)
+        
+        # Check that strategy handles extreme moves
+        price_range = btc_data['close'].max() / btc_data['close'].min()
+        assert price_range > 1.0  # Should have some price movement
+    
+    def test_btc_strategy_performance_metrics(self):
+        """Test strategy performance calculation with BTC data."""
+        btc_data = generate_btc_usdt_data(periods=500, seed=42)
+        
+        strategy = create_default_strategy()
+        result = strategy.run_strategy(btc_data)
+        trades = strategy.executed_trades
+        
+        if trades:  # Only test if trades were executed
+            # Calculate basic performance metrics
+            total_pnl = sum(trade.pnl for trade in trades)
+            winning_trades = [t for t in trades if t.pnl > 0]
+            losing_trades = [t for t in trades if t.pnl <= 0]
+            
+            win_rate = len(winning_trades) / len(trades) if trades else 0
+            
+            # Performance should be reasonable
+            assert isinstance(total_pnl, (int, float))
+            assert 0 <= win_rate <= 1
+            
+            # Check trade structure
+            for trade in trades[:5]:  # Check first 5 trades
+                assert hasattr(trade, 'entry_price')
+                assert hasattr(trade, 'exit_price') 
+                assert hasattr(trade, 'pnl')
+                assert hasattr(trade, 'direction')
+                assert trade.direction in ['long', 'short']
+    
+    def test_btc_multiple_timeframes(self):
+        """Test BTC data generation for different timeframes."""
+        timeframes = ['1h', '4h', '1d']
+        
+        for tf in timeframes:
+            btc_data = generate_btc_usdt_data(
+                periods=100,
+                freq=tf,
+                seed=42
+            )
+            
+            # Should generate data successfully for all timeframes
+            assert len(btc_data) == 100
+            assert btc_data.index.freq is not None or len(btc_data.index) > 1
+            
+            # Validate the data
+            is_valid, message = validate_ohlcv_data(btc_data)
+            assert is_valid, f"Timeframe {tf} validation failed: {message}"
+
+
+class TestIntegrationBTC:
+    """Integration tests using BTC/USDT data."""
+    
+    def test_end_to_end_btc_strategy(self):
+        """Complete end-to-end test with BTC data."""
+        # Generate realistic BTC data
+        btc_data = generate_btc_usdt_data(
+            periods=400,
+            base_price=28000,
+            volatility=0.03,
+            seed=42
+        )
+        
+        # Validate data first
+        is_valid, message = validate_ohlcv_data(btc_data)
+        assert is_valid, f"BTC data validation failed: {message}"
+        
+        # Test with multiple parameter sets
+        parameter_sets = [
+            # Conservative crypto strategy
+            StrategyParams(
+                smooth_type="SMA",
+                smoothing_length=50,
+                enable_longs=True,
+                enable_shorts=False,
+                sl_percent_long=2.0,
+                use_rsi_filter=True
+            ),
+            # Aggressive crypto strategy  
+            StrategyParams(
+                smooth_type="EMA",
+                smoothing_length=20,
+                enable_longs=True,
+                enable_shorts=True,
+                sl_percent_long=3.0,
+                sl_percent_short=3.0,
+                use_rsi_filter=True,
+                use_atr_filter=True
+            )
+        ]
+        
+        for i, params in enumerate(parameter_sets):
+            strategy = MomentumStrategy(params)
+            result = strategy.run_strategy(btc_data)
+            
+            # Basic validation
+            assert isinstance(result, pd.DataFrame)
+            assert len(result) == len(btc_data)
+            
+            # Check that technical indicators were calculated
+            expected_columns = ['close', 'ma100', 'ma500']
+            for col in expected_columns:
+                assert col in result.columns, f"Missing column {col} in parameter set {i}"
+            
+            # Strategy should complete without errors
+            trades = strategy.executed_trades
+            assert isinstance(trades, list)
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
