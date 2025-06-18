@@ -1,5 +1,8 @@
 # pinescript-to-python
 
+**Author:** Enkhbat.E  
+**Email:** enkhbat@em4it.com
+
 A comprehensive trading strategy framework that converts Pine Script strategies to Python, with advanced backtesting, optimization, and analysis capabilities.
 
 ## 🚀 Quick Start
