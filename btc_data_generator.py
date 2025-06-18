@@ -62,7 +62,7 @@ def generate_btc_usdt_data(
     # Generate open prices (previous close + small gap)
     gaps = np.random.normal(0, volatility * 0.1, periods)
     df['open'] = df['close'].shift(1) * (1 + gaps)
-    df['open'].iloc[0] = base_price
+    df.loc[df.index[0], 'open'] = base_price
     
     # Generate high/low with realistic spreads
     hl_range = np.random.exponential(volatility * 0.5, periods) + volatility * 0.1

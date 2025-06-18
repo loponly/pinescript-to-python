@@ -42,7 +42,16 @@ class SignalGenerator:
         if params.use_atr_filter:
             conditions.append(df['atr'] > df['atr_smooth'])
         
-        return pd.Series(np.logical_and.reduce(conditions), index=df.index)
+        # Convert all conditions to pandas Series and combine them
+        result = pd.Series(True, index=df.index) if params.enable_longs else pd.Series(False, index=df.index)
+        
+        for condition in conditions[1:]:  # Skip the enable_longs boolean
+            if isinstance(condition, bool):
+                result = result & condition
+            else:
+                result = result & condition.fillna(False)
+                
+        return result
     
     def generate_short_signals(
         self, 
@@ -73,7 +82,16 @@ class SignalGenerator:
         if params.use_strong_uptrend_block:
             conditions.append(df['ema_gap_pct'] <= params.short_trend_gap_pct)
         
-        return pd.Series(np.logical_and.reduce(conditions), index=df.index)
+        # Convert all conditions to pandas Series and combine them
+        result = pd.Series(True, index=df.index) if params.enable_shorts else pd.Series(False, index=df.index)
+        
+        for condition in conditions[1:]:  # Skip the enable_shorts boolean
+            if isinstance(condition, bool):
+                result = result & condition
+            else:
+                result = result & condition.fillna(False)
+                
+        return result
     
     def generate_all_signals(
         self, 

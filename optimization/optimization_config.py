@@ -162,5 +162,18 @@ PARAMETER_GRIDS = {
         'use_rsi_filter': [True],
         'use_adx_filter': [True],
         'sl_percent_long': [3.0, 4.0, 5.0]
+    },
+    
+    "crypto_focused": {
+        'smooth_type': ['EMA', 'SMA'],
+        'smoothing_length': [10, 20, 50],
+        'sl_percent_long': [2.0, 3.0, 4.0, 5.0],
+        'sl_percent_short': [2.0, 3.0, 4.0, 5.0],
+        'rsi_length_long': [7, 10, 14],
+        'rsi_length_short': [7, 10, 14],
+        'use_rsi_filter': [True, False],
+        'use_atr_filter': [True, False],
+        'enable_shorts': [True, False],
+        'use_trend_filter': [True, False]
     }
 }
