@@ -1,19 +1,19 @@
 ============================================================
 TRADING STRATEGY OPTIMIZATION SUMMARY REPORT
 ============================================================
-Generated: 2025-06-18 14:00:54
+Generated: 2025-06-19 10:37:25
 
 OVERALL STATISTICS
 ------------------------------
-Total Results: 30
+Total Results: 35
 Unique Stocks: 1
 Unique Timeframes: 1
-Profitable Strategies: 10
-Profitability Rate: 33.3%
-Average Profit Factor: 0.60
+Profitable Strategies: 15
+Profitability Rate: 42.9%
+Average Profit Factor: 0.77
 Best Profit Factor: 1.82
-Average Win Rate: 5.0%
-Average Max Drawdown: -21.7%
+Average Win Rate: 6.5%
+Average Max Drawdown: -20.8%
 
 TOP 10 BEST STRATEGIES BY STOCK
 ----------------------------------------
